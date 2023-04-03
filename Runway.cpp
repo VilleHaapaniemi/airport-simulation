@@ -45,6 +45,37 @@ Uses:  class Extended_queue.
    return result;
 }
 
+Error_code Runway::can_land_check_fuel(const Plane &current)
+/*
+Post:  If possible, the Plane current is added to the
+       landing Queue; otherwise, an Error_code of overflow is
+       returned. The Runway statistics are updated.
+Uses:  class Extended_queue.
+*/
+
+{
+   Error_code result;
+   if (landing.size() < queue_limit)
+      if (current.get_fuel_level() < landing.size())
+      {
+         result = emergency_landing.append(current);
+      }
+      else
+      {
+         result = landing.append(current);
+      }
+   else
+      result = fail;
+   num_land_requests++;
+
+   if (result != success)
+      num_land_refused++;
+   else
+      num_land_accepted++;
+
+   return result;
+}
+
 Error_code Runway::can_depart(const Plane &current)
 /*
 Post:  If possible, the Plane current is added to the
@@ -82,7 +113,16 @@ Uses:  class Extended_queue.
 
 {
    Runway_activity in_progress;
-   if (!landing.empty())
+   if (!emergency_landing.empty())
+   {
+      emergency_landing.retrieve(moving);
+      land_wait += time - moving.started();
+      num_landings++;
+      num_emergency_landings++;
+      in_progress = emergency_land;
+      emergency_landing.serve();
+   }
+   else if (!landing.empty())
    {
       landing.retrieve(moving);
       land_wait += time - moving.started();
@@ -369,4 +409,24 @@ Post: Runway usage statistics are summarized and printed.
    cout << "Average observed rate of planes wanting to take off "
         << ((float)num_takeoff_requests) / ((float)time)
         << " per time unit" << endl;
+   cout << "Planes crashed " << num_crashed << endl;
+   cout << "Emergency landings " << num_emergency_landings << endl;
+}
+
+void Runway::consumpt_fuel_waiting_landing(int current_time)
+{
+   Plane waiting_plane;
+   for (int i = 0 ; i < landing.size() ; i++)
+   {
+      landing.retrieve(waiting_plane);
+      landing.serve();
+      if (waiting_plane.get_fuel_level() > 0)
+      {
+         waiting_plane.set_fuel_level(waiting_plane.get_fuel_level() - 1);
+         landing.append(waiting_plane);
+      } else {
+         num_crashed ++;
+         waiting_plane.crash(current_time);
+      }
+   }
 }

@@ -2,10 +2,10 @@
 #include<iostream>
 using std::cout, std::endl;
 
-Plane::Plane(int flt, int time, Plane_status status)
+Plane::Plane(int flt, int time, Plane_status status, int fuel)
 /*
 Post:  The Plane data members flt_num, clock_start,
-       and state are set to the values of the parameters flt,
+       and state and fuel_level are set to the values of the parameters flt,
        time and status, respectively.
 */
 
@@ -13,6 +13,8 @@ Post:  The Plane data members flt_num, clock_start,
    flt_num = flt;
    clock_start = time;
    state = status;
+   fuel_level = fuel;
+
    cout << "Plane number " << flt << " ready to ";
    if (status == arriving)
       cout << "land." << endl;
@@ -20,6 +22,11 @@ Post:  The Plane data members flt_num, clock_start,
       cout << "take off." << endl;
 }
 
+Plane::Plane(int flt, int time, Plane_status status)
+:Plane(flt, time, status, -1)
+{
+
+}
 
 Plane::Plane()
 /*
@@ -30,6 +37,7 @@ Post:  The Plane data members flt_num, clock_start,
    flt_num = -1;
    clock_start = -1;
    state = null;
+   fuel_level = -1;
 }
 
 
@@ -60,6 +68,11 @@ Post: Processes a Plane that is landing at the specified time.
         << " in the takeoff queue." << endl;
 }
 
+void Plane::emergency_land(int time) const
+{
+   cout << time << ": Plane number " << flt_num << " EMERGENCY landed!" << endl;
+}
+
 
 void Plane::fly(int time) const
 /*
@@ -80,4 +93,22 @@ Post: Return the time that the Plane entered the airport system.
 */
 {
    return clock_start;
+}
+
+int Plane::get_fuel_level() const
+{
+   return fuel_level;
+}
+
+void Plane::set_fuel_level(int fuel)
+{
+   fuel_level = fuel;
+}
+
+void Plane::crash(int time) const
+{
+   int wait = time - clock_start;
+   cout << time << ": Plane number " << flt_num << " CRASHED after "
+        << wait << " time unit" << ((wait == 1) ? "" : "s")
+        << endl;
 }

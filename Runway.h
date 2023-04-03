@@ -9,7 +9,8 @@ enum Runway_activity
    land_2_planes,
    take_off_2_planes,
    land_2_planes_and_takeoff,
-   take_off_2_planes_and_land
+   take_off_2_planes_and_land,
+   emergency_land
 };
 
 class Runway
@@ -17,7 +18,9 @@ class Runway
 public:
    Runway(int limit);
    Error_code can_land(const Plane &current);
+   Error_code can_land_check_fuel(const Plane &current);
    Error_code can_depart(const Plane &current);
+   void consumpt_fuel_waiting_landing(int current_time);
    Runway_activity activity(int time, Plane &moving);
    Runway_activity activity(int time, Plane &arriving, Plane &departing);
    Runway_activity activity(int time, Plane &moving_plane1, Plane &moving_plane2, Plane &moving_plane3);
@@ -25,6 +28,7 @@ public:
    void shut_down(int time) const;
 
 private:
+   Queue emergency_landing;
    Queue landing;
    Queue takeoff;
    int queue_limit;
@@ -39,5 +43,7 @@ private:
    int land_wait;            //  total time of planes waiting to land
    int takeoff_wait;         //  total time of planes waiting to take off
    int idle_time;            //  total time runway is idle
+   int num_crashed = 0;
+   int num_emergency_landings = 0;
    bool clearing_arrivals = false;
 };
