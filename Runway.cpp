@@ -411,6 +411,7 @@ Post: Runway usage statistics are summarized and printed.
         << " per time unit" << endl;
    cout << "Planes crashed " << num_crashed << endl;
    cout << "Emergency landings " << num_emergency_landings << endl;
+   cout << "*****************************************************************\n\n";
 }
 
 void Runway::consumpt_fuel_waiting_landing(int current_time)
