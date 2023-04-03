@@ -53,6 +53,7 @@ Uses: Classes Runway, Plane, Random and functions run_idle, initialize.
       case land_and_take_off:
          arriving_plane.land(current_time);
          departing_plane.fly(current_time);
+         break;
       case idle:
          run_idle(current_time);
       }

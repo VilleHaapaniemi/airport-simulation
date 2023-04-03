@@ -116,8 +116,11 @@ Uses:  class Extended_queue.
 
 {
    Runway_activity in_progress;
+   bool isIdle = true;
+
    if (!landing.empty())
    {
+      isIdle = false;
       landing.retrieve(arriving);
       land_wait += time - arriving.started();
       num_landings++;
@@ -127,6 +130,7 @@ Uses:  class Extended_queue.
 
    if (!takeoff.empty())
    {
+      isIdle = false;
       takeoff.retrieve(departing);
       takeoff_wait += time - departing.started();
       num_takeoffs++;
@@ -141,7 +145,105 @@ Uses:  class Extended_queue.
       takeoff.serve();
    }
 
-   if (landing.empty() && takeoff.empty())
+   if (isIdle)
+   {
+      idle_time++;
+      in_progress = idle;
+   }
+   return in_progress;
+}
+
+Runway_activity Runway::activity_landing_secured(int time, Plane &moving_plane1, Plane &moving_plane2)
+/*
+Post:
+Uses:  class Extended_queue.
+*/
+{
+   Runway_activity in_progress;
+   bool isIdle = true;
+
+    if (landing.size() == queue_limit)
+   {
+      clearing_arrivals = true;
+      cout << "Landing Queue full!\n";
+   }
+
+   if (clearing_arrivals)
+   {
+      if (!landing.empty())
+      {
+         landing.retrieve(moving_plane1);
+         land_wait += time - moving_plane1.started();
+         num_landings++;
+         in_progress = land;
+         landing.serve();
+
+         if (!landing.empty())
+         {
+            landing.retrieve(moving_plane2);
+            land_wait += time - moving_plane2.started();
+            num_landings++;
+            in_progress = land_2_planes;
+            landing.serve();
+         }
+      }
+
+      if (landing.empty())
+      {
+         clearing_arrivals = false;
+         cout << "Landing Queue cleared!\n";
+      }
+
+      return in_progress;
+   }
+
+   if (!landing.empty())
+   {
+      isIdle = false;
+      landing.retrieve(moving_plane1);
+      land_wait += time - moving_plane1.started();
+      num_landings++;
+      in_progress = land;
+      landing.serve();
+
+      if (takeoff.empty() && !landing.empty())
+      {
+         landing.retrieve(moving_plane2);
+         land_wait += time - moving_plane2.started();
+         num_landings++;
+         in_progress = land_2_planes;
+         landing.serve();
+      }
+   }
+
+   if (!takeoff.empty())
+   {
+      isIdle = false;
+      takeoff.retrieve(moving_plane2);
+      takeoff_wait += time - moving_plane2.started();
+      num_takeoffs++;
+
+      if (in_progress == land)
+      {
+         in_progress = land_and_take_off;
+      }
+      else
+      {
+         in_progress = take_off;
+      }
+      takeoff.serve();
+
+      if (landing.empty() && !takeoff.empty())
+      {
+         takeoff.retrieve(moving_plane1);
+         takeoff_wait += time - moving_plane1.started();
+         num_takeoffs++;
+         in_progress = take_off_2_planes;
+         takeoff.serve();
+      }
+   }
+
+   if (isIdle)
    {
       idle_time++;
       in_progress = idle;

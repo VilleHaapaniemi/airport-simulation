@@ -1,6 +1,6 @@
 #pragma once
 
-enum Runway_activity {idle, land, take_off, land_and_take_off};
+enum Runway_activity {idle, land, take_off, land_and_take_off, land_2_planes, take_off_2_planes};
 
 class Runway {
 public:
@@ -9,6 +9,7 @@ public:
    Error_code can_depart(const Plane &current);
    Runway_activity activity(int time, Plane &moving);
    Runway_activity activity(int time, Plane &arriving, Plane &departing);
+   Runway_activity activity_landing_secured(int time, Plane &arriving, Plane &departing);
    void shut_down(int time) const;
 
 private:
@@ -26,4 +27,5 @@ private:
    int land_wait;                //  total time of planes waiting to land
    int takeoff_wait;             //  total time of planes waiting to take off
    int idle_time;                //  total time runway is idle
+   bool clearing_arrivals = false;
 };
