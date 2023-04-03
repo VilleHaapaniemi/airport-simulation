@@ -1,7 +1,6 @@
 #pragma once
-//#include "Utility.h"
 
-enum Runway_activity {idle, land, takeoff};
+enum Runway_activity {idle, land, take_off};
 
 class Runway {
 public:
@@ -12,8 +11,8 @@ public:
    void shut_down(int time) const;
 
 private:
-   Extended_queue landing;
-   Extended_queue takeoff;
+   Queue landing;
+   Queue takeoff;
    int queue_limit;
    int num_land_requests;        //  number of planes asking to land
    int num_takeoff_requests;     //  number of planes asking to take off

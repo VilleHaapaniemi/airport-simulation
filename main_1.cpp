@@ -1,10 +1,12 @@
 #include <iostream>
 #include "Utility.h"
-#include "Random.h"
 #include "Plane.h"
+#include "Queue.h"
+#include "Random.h"
 #include "Runway.h"
+#include "mains.h"
 
-int main_1()     //  Airport simulation program
+void main_1()     //  Airport simulation program
 /*
 Pre:  The user must supply the number of time intervals the simulation is to
       run, the expected number of planes arriving, the expected number
@@ -45,7 +47,7 @@ Uses: Classes Runway, Plane, Random and functions run_idle, initialize.
       case land:
          moving_plane.land(current_time);
          break;
-      case takeoff:
+      case take_off:
          moving_plane.fly(current_time);
          break;
       case idle:

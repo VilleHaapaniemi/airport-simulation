@@ -1,6 +1,7 @@
-#include "Plane.h"
-#include "Runway.h"
 #include "Utility.h"
+#include "Plane.h"
+#include "Queue.h"
+#include "Runway.h"
 #include<iostream>
 
 using std::cout, std::endl;
@@ -96,7 +97,7 @@ Uses:  class Extended_queue.
       takeoff.retrieve(moving);
       takeoff_wait += time - moving.started();
       num_takeoffs++;
-      in_progress = takeoff;
+      in_progress = take_off;
       takeoff.serve();
    }
 
