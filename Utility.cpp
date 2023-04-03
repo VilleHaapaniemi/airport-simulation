@@ -36,6 +36,13 @@ Uses: utility function user_says_yes
          cout << "Up to what number of planes can be waiting to land "
                << "or take off at any time? " << flush;
       break;
+      case 4:
+         cout << "This program simulates an airport with three runways" << endl
+               << "One runway is for landing. Second runway for departing." << endl
+               << "Third runway is used for landings. If landing queue is empty then it can be used on takoffs" << endl;
+         cout << "Up to what number of planes can be waiting to land "
+               << "or take off at any time? " << flush;
+      break;
    }
    cin  >> queue_limit;
 
