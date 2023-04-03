@@ -4,7 +4,7 @@
 using std::cout, std::cin, std::endl, std::flush, std::cerr;
 
 void initialize(int &end_time, int &queue_limit,
-                double &arrival_rate, double &departure_rate)
+                double &arrival_rate, double &departure_rate, int mode)
 /*
 Pre:  The user specifies the number of time units in the simulation,
       the maximal queue sizes permitted,
@@ -16,10 +16,20 @@ Uses: utility function user_says_yes
 */
 
 {
-   cout << "This program simulates an airport with only one runway." << endl
-        << "One plane can land or depart in each unit of time." << endl;
-   cout << "Up to what number of planes can be waiting to land "
-        << "or take off at any time? " << flush;
+   switch (mode) {
+      case 1:
+         cout << "This program simulates an airport with only one runway." << endl
+               << "One plane can land or depart in each unit of time." << endl;
+         cout << "Up to what number of planes can be waiting to land "
+               << "or take off at any time? " << flush;
+      break;
+      case 2:
+         cout << "This program simulates an airport with two runways" << endl
+               << "One plane can land and depart in each unit of time." << endl;
+         cout << "Up to what number of planes can be waiting to land "
+               << "or take off at any time? " << flush;
+      break;
+   }
    cin  >> queue_limit;
 
    cout << "How many units of time will the simulation run?" << flush;

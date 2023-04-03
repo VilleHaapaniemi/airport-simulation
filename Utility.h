@@ -7,6 +7,6 @@ enum Error_code {
 };
 
 void initialize(int &end_time, int &queue_limit,
-                double &arrival_rate, double &departure_rate);
+                double &arrival_rate, double &departure_rate, int mode);
 
 void run_idle(int time);

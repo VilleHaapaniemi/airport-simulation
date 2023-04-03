@@ -2,7 +2,7 @@
 #include "Plane.h"
 #include "Queue.h"
 #include "Runway.h"
-#include<iostream>
+#include <iostream>
 
 using std::cout, std::endl;
 
@@ -20,7 +20,6 @@ Post:  The Runway data members are initialized to record no
    num_land_accepted = num_takeoff_accepted = 0;
    land_wait = takeoff_wait = idle_time = 0;
 }
-
 
 Error_code Runway::can_land(const Plane &current)
 /*
@@ -46,7 +45,6 @@ Uses:  class Extended_queue.
    return result;
 }
 
-
 Error_code Runway::can_depart(const Plane &current)
 /*
 Post:  If possible, the Plane current is added to the
@@ -70,7 +68,6 @@ Uses:  class Extended_queue.
    return result;
 }
 
-
 Runway_activity Runway::activity(int time, Plane &moving)
 /*
 Post:  If the landing Queue has entries, its front
@@ -85,7 +82,8 @@ Uses:  class Extended_queue.
 
 {
    Runway_activity in_progress;
-   if (!landing.empty()) {
+   if (!landing.empty())
+   {
       landing.retrieve(moving);
       land_wait += time - moving.started();
       num_landings++;
@@ -93,7 +91,8 @@ Uses:  class Extended_queue.
       landing.serve();
    }
 
-   else if (!takeoff.empty()) {
+   else if (!takeoff.empty())
+   {
       takeoff.retrieve(moving);
       takeoff_wait += time - moving.started();
       num_takeoffs++;
@@ -101,7 +100,49 @@ Uses:  class Extended_queue.
       takeoff.serve();
    }
 
-   else {
+   else
+   {
+      idle_time++;
+      in_progress = idle;
+   }
+   return in_progress;
+}
+
+Runway_activity Runway::activity(int time, Plane &arriving, Plane &departing)
+/*
+Post:
+Uses:  class Extended_queue.
+*/
+
+{
+   Runway_activity in_progress;
+   if (!landing.empty())
+   {
+      landing.retrieve(arriving);
+      land_wait += time - arriving.started();
+      num_landings++;
+      in_progress = land;
+      landing.serve();
+   }
+
+   if (!takeoff.empty())
+   {
+      takeoff.retrieve(departing);
+      takeoff_wait += time - departing.started();
+      num_takeoffs++;
+      if (in_progress == land)
+      {
+         in_progress = land_and_take_off;
+      }
+      else
+      {
+         in_progress = take_off;
+      }
+      takeoff.serve();
+   }
+
+   if (landing.empty() && takeoff.empty())
+   {
       idle_time++;
       in_progress = idle;
    }
@@ -138,16 +179,17 @@ Post: Runway usage statistics are summarized and printed.
         << "Total number of planes left in takeoff queue "
         << takeoff.size() << endl;
    cout << "Percentage of time runway idle "
-        << 100.0 * (( float ) idle_time) / (( float ) time) << "%" << endl;
+        << 100.0 * ((float)idle_time) / ((float)time) << "%" << endl;
    cout << "Average wait in landing queue "
-        << (( float ) land_wait) / (( float ) num_landings) << " time units";
-   cout << endl << "Average wait in takeoff queue "
-        << (( float ) takeoff_wait) / (( float ) num_takeoffs)
+        << ((float)land_wait) / ((float)num_landings) << " time units";
+   cout << endl
+        << "Average wait in takeoff queue "
+        << ((float)takeoff_wait) / ((float)num_takeoffs)
         << " time units" << endl;
    cout << "Average observed rate of planes wanting to land "
-        << (( float ) num_land_requests) / (( float ) time)
+        << ((float)num_land_requests) / ((float)time)
         << " per time unit" << endl;
    cout << "Average observed rate of planes wanting to take off "
-        << (( float ) num_takeoff_requests) / (( float ) time)
+        << ((float)num_takeoff_requests) / ((float)time)
         << " per time unit" << endl;
 }

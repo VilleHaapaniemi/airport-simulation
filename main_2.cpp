@@ -23,7 +23,7 @@ Uses: Classes Runway, Plane, Random and functions run_idle, initialize.
    int queue_limit;         //  size of Runway queues
    int flight_number = 0;
    double arrival_rate, departure_rate;
-   initialize(end_time, queue_limit, arrival_rate, departure_rate);
+   initialize(end_time, queue_limit, arrival_rate, departure_rate, 2);
    Random variable;
    Runway small_airport(queue_limit);
    for (int current_time = 0; current_time < end_time; current_time++) { //  loop over time intervals
@@ -41,15 +41,18 @@ Uses: Classes Runway, Plane, Random and functions run_idle, initialize.
             current_plane.refuse();
       }
 
-      Plane moving_plane;
-      switch (small_airport.activity(current_time, moving_plane)) {
-        //  Let at most one Plane onto the Runway at current_time.
+      Plane arriving_plane, departing_plane;
+      switch (small_airport.activity(current_time, arriving_plane, departing_plane)) {
+        //  Let two planes onto the Runway at current_time.
       case land:
-         moving_plane.land(current_time);
+         arriving_plane.land(current_time);
          break;
       case take_off:
-         moving_plane.fly(current_time);
+         departing_plane.fly(current_time);
          break;
+      case land_and_take_off:
+         arriving_plane.land(current_time);
+         departing_plane.fly(current_time);
       case idle:
          run_idle(current_time);
       }

@@ -1,6 +1,6 @@
 #pragma once
 
-enum Runway_activity {idle, land, take_off};
+enum Runway_activity {idle, land, take_off, land_and_take_off};
 
 class Runway {
 public:
@@ -8,6 +8,7 @@ public:
    Error_code can_land(const Plane &current);
    Error_code can_depart(const Plane &current);
    Runway_activity activity(int time, Plane &moving);
+   Runway_activity activity(int time, Plane &arriving, Plane &departing);
    void shut_down(int time) const;
 
 private:
